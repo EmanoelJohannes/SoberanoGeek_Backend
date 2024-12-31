@@ -1,0 +1,30 @@
+# Dependências do Node.js
+node_modules/
+npm-debug.log*
+
+# Logs e relatórios
+logs/
+*.log
+yarn-debug.log*
+yarn-error.log*
+
+# Pastas de ambiente e configurações locais
+.env
+.DS_Store
+
+# Pastas de build ou cache
+/build/
+/dist/
+.cache/
+coverage/
+.tmp/
+public/uploads/
+
+# Configurações específicas de editores
+.vscode/
+.idea/
+*.swp
+
+# Arquivos do sistema operacional
+Thumbs.db
+.DS_Store

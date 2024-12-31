@@ -1,0 +1,30 @@
+{
+  "name": "soberano-geek",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "seed:make": "npx knex seed:make --knexfile ./knexfile.js",
+    "seed:run": "npx knex seed:run --knexfile ./knexfile.js",
+    "migrate:make": "npx knex migrate:make --knexfile ./knexfile.js",
+    "migrate:latest": "npx knex migrate:latest --knexfile ./knexfile.js",
+    "migrate:rollback": "npx knex migrate:rollback --knexfile ./knexfile.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "knex": "^3.1.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
