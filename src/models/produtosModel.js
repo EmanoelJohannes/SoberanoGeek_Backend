@@ -25,15 +25,17 @@ class ProdutosModel {
 
     static async findByTagWithFilters(tag, filters) {
         const query = knex('produtos')
+            .distinctOn('produtos.id') // Garante que os produtos sejam únicos pelo ID
             .join('produto_tags', 'produtos.id', 'produto_tags.produto_id')
             .join('tags', 'produto_tags.tag_id', 'tags.id')
             .leftJoin('produto_filtro_valores', 'produtos.id', 'produto_filtro_valores.produto_id')
             .leftJoin('valores_filtros', 'produto_filtro_valores.valor_filtro_id', 'valores_filtros.id')
             .where('tags.descricao', tag)
             .select('produtos.*');
-    
+        
         return buildQuery(query, filters);
     }
+    
 }
 
 module.exports = ProdutosModel;

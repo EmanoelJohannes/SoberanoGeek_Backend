@@ -32,10 +32,6 @@ const produtosController = {
     
             const produtos = await ProdutosModel.findByTagWithFilters(tag, filters);
     
-            if (!produtos.length) {
-                return res.status(404).json({ message: 'Nenhum produto encontrado para os filtros aplicados.' });
-            }
-    
             res.json(produtos);
         } catch (error) {
             console.error(error);
