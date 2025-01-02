@@ -16,10 +16,11 @@ npx knex migrate:latest
 
 
 Rode as migrations na seguinte ordem:
+npx knex seed:run --specific=seed_marcas.js
 npx knex seed:run --specific=seed_produtos.js
 npx knex seed:run --specific=seed_tags.js
 npx knex seed:run --specific=seed_filtros.js
-npx knex seed:run --specific=seed_filtro_valores.js
+npx knex seed:run --specific=seed_valores_filtros.js
 npx knex seed:run --specific=seed_produto_filtro_valores.js
 npx knex seed:run --specific=seed_produto_tags.js
 npx knex seed:run --specific=seed_usuarios.js

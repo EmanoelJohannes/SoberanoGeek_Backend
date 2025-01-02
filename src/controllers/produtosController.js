@@ -15,12 +15,20 @@ const produtosController = {
     async listByTag(req, res) {
         try {
             const { tag } = req.params;
-            const { minPrice, maxPrice, ...restFilters } = req.query;
+            const { minPrice, maxPrice, marca, ...restFilters } = req.query;
     
             const filters = [];
     
             if (minPrice) filters.push({ coluna: 'produtos.preco', operador: '>=', valor: minPrice });
             if (maxPrice) filters.push({ coluna: 'produtos.preco', operador: '<=', valor: maxPrice });
+    
+            if (marca) {
+                filters.push({
+                    coluna: 'marcas.nome',
+                    operador: 'in',
+                    valor: Array.isArray(marca) ? marca : [marca]
+                });
+            }
     
             const filtroValores = Object.entries(restFilters).map(([key, value]) => ({
                 coluna: 'valores_filtros.valor',
@@ -37,7 +45,7 @@ const produtosController = {
             console.error(error);
             res.status(500).json({ message: 'Erro ao listar produtos por tag.' });
         }
-    },        
+    },    
 
     async getById(req, res) {
         try {
