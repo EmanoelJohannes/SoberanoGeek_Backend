@@ -1,4 +1,5 @@
 const ProdutosModel = require('../models/produtosModel');
+const ProdutoImagensController = require('./produtoImagemController');
 
 const produtosController = {
     async list(req, res) {
@@ -16,12 +17,12 @@ const produtosController = {
         try {
             const { tag } = req.params;
             const { minPrice, maxPrice, marca, ...restFilters } = req.query;
-    
+
             const filters = [];
-    
+
             if (minPrice) filters.push({ coluna: 'produtos.preco', operador: '>=', valor: minPrice });
             if (maxPrice) filters.push({ coluna: 'produtos.preco', operador: '<=', valor: maxPrice });
-    
+
             if (marca) {
                 filters.push({
                     coluna: 'marcas.nome',
@@ -29,23 +30,23 @@ const produtosController = {
                     valor: Array.isArray(marca) ? marca : [marca]
                 });
             }
-    
+
             const filtroValores = Object.entries(restFilters).map(([key, value]) => ({
                 coluna: 'valores_filtros.valor',
                 operador: 'in',
                 valor: Array.isArray(value) ? value : [value]
             }));
-    
+
             filters.push(...filtroValores);
-    
+
             const produtos = await ProdutosModel.findByTagWithFilters(tag, filters);
-    
+
             res.json(produtos);
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Erro ao listar produtos por tag.' });
         }
-    },    
+    },
 
     async getById(req, res) {
         try {
@@ -65,15 +66,60 @@ const produtosController = {
 
     async create(req, res) {
         try {
-            const novoProduto = req.body;
+            const { tags } = req.body;
+    
+            console.log('Tags recebidas:', tags);
+    
+            const novoProduto = {
+                nome: req.body.nome,
+                descricao: req.body.descricao || null,
+                preco: req.body.preco ? parseFloat(req.body.preco) : null,
+                categoria: req.body.categoria,
+                quantidade: req.body.quantidade ? parseInt(req.body.quantidade, 10) : null,
+                modelo: req.body.modelo || null,
+                fabricante: req.body.fabricante || null,
+                data_fabricacao: req.body.data_fabricacao || null,
+                data_validade: req.body.data_validade || null,
+                marca_id: req.body.marca_id ? parseInt(req.body.marca_id, 10) : null,
+            };
+    
             const id = await ProdutosModel.create(novoProduto);
+            const idProduto = id[0].id;
 
-            res.status(201).json({ id, message: 'Produto criado com sucesso.' });
+            console.log(idProduto);
+            
+            // Processar e salvar as tags vinculadas ao produto
+            if (tags && Array.isArray(tags) && tags.length > 0) {
+                const tagIds = tags.map((tag) => parseInt(tag, 10)); // Converte para inteiros
+                console.log('IDs das Tags:', tagIds);
+    
+                await ProdutosModel.addTags(idProduto, tagIds);
+            }
+    
+            // Salvar as imagens vinculadas ao produto (se houver)
+            if (req.files && req.files.length > 0) {
+                for (const file of req.files) {
+                    // Criar um objeto simulado para passar ao método `upload`
+                    const mockReq = {
+                        ...req,
+                        params: { idProduto },
+                        file,
+                    };
+                    const mockRes = {
+                        status: () => ({ json: () => {} }),
+                    };
+    
+                    // Chama o método `upload` do ProdutoImagensController
+                    await ProdutoImagensController.upload(mockReq, mockRes);
+                }
+            }
+    
+            res.status(201).json({ message: 'Produto criado com sucesso.', idProduto });
         } catch (error) {
-            console.error(error);
+            console.error('Erro ao criar produto:', error);
             res.status(500).json({ message: 'Erro ao criar produto.' });
         }
-    },
+    },  
 
     async update(req, res) {
         try {

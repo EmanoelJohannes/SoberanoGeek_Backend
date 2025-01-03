@@ -33,11 +33,30 @@ class ProdutosModel {
             .leftJoin('marcas', 'produtos.marca_id', 'marcas.id')
             .where('tags.descricao', tag)
             .select('produtos.*');
-        
+
         return buildQuery(query, filters);
     }
+
+
+    static async addImage(produtoId, imagem) {
+        return await knex('produto_imagens').insert({
+            produto_id: produtoId,
+            caminho: imagem.caminho,
+            descricao: imagem.descricao,
+        });
+    }
+
+
+    static async addTags(produtoId, tags) {
+        const tagsToInsert = tags.map((tagId) => ({
+            produto_id: produtoId,
+            tag_id: tagId,
+        }));
+        return await knex('produto_tags').insert(tagsToInsert);
+    }
     
-    
+
+
 }
 
 module.exports = ProdutosModel;

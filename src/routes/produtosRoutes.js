@@ -1,6 +1,7 @@
 const express = require('express');
 const produtosController = require('../controllers/produtosController');
 const router = express.Router();
+const upload = require('../middlewares/uploadMiddleware');
 
 // Lista produtos por tag com filtros
 router.get('/tag/:tag', produtosController.listByTag);
@@ -12,7 +13,7 @@ router.get('/', produtosController.list);
 router.get('/:id', produtosController.getById);
 
 // Criar um novo produto
-router.post('/', produtosController.create);
+router.post('/', upload.array('imagens'), produtosController.create);
 
 // Atualizar um produto existente
 router.put('/:id', produtosController.update);
